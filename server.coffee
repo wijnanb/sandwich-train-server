@@ -7,6 +7,7 @@ io = require('socket.io').listen 8081
 config =
     countdown: 12
     leaveat: 2
+    resetAllDelay: 5*1000 # 5sec
 
 users = {}
 socket = null
@@ -62,7 +63,6 @@ hungryCount = ->
     Object.keys(users).length or 0
 
 isHungry = (author) ->
-    console.log "author", users[author]
     if users[author]? then true else false
 
 setHungry = (author) ->
@@ -94,10 +94,12 @@ getStatus = (author=null)->
             status = 'departed'
 
             unless previousStatus is 'departed'
-                setInterval reset, 5*1000 # 5sec
+                console.log "START TIMER!"
+                clearTimeout resetTimerID
+                resetTimerID = setTimeout reset, config.resetAllDelay
 
     unless status is 'departed'
-        clearInterval resetTimerID
+        clearTimeout resetTimerID
 
 
     current =
@@ -120,9 +122,10 @@ update = ->
     io.sockets.emit 'update', status
 
 reset = ->
+    console.log "RESET"
     users = {}
     socket = null
-    clearInterval resetTimerID
+    clearTimeout resetTimerID
     clearInterval countdownTimerID
     countdownStart = null
     countdownTimerID = null
@@ -142,9 +145,6 @@ onCountdownUpdate = ->
         console.log "finished!"
 
     update()
-
-
-
 
 
 server.listen 8080

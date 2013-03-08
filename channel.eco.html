@@ -34,7 +34,7 @@
         });
 
         socket.on('update', function (data) {
-          console.log("[socket] status", JSON.stringify(status));
+          console.log("[socket] status", status);
           onStatus(data)
         });
 
