@@ -12,8 +12,9 @@ users = {}
 socket = null
 
 countdownStart = null
-countdownInterval = null
+countdownTimerID = null
 countdownValue = config.countdown
+resetTimerID = null
 
 server = express()
 
@@ -32,6 +33,9 @@ server.get '/channel', (req, res) ->
         #socket_io_lib = "/socket.io/socket.io.js"
     res.send eco.render template, context
 
+server.post '/reset', (req, res) ->
+    reset()
+    res.json getStatus()
 
 server.post '/hungry', (req, res) ->
     hungry = (req.body.hungry is 'true') or (req.body.hungry =='on')
@@ -71,6 +75,8 @@ removeHungry = (author) ->
     update()
 
 getStatus = (author=null)->
+    previousStatus = status
+
     count = hungryCount()
     status = 'waiting'
     countdown = countdownValue
@@ -80,12 +86,19 @@ getStatus = (author=null)->
 
         unless countdownStart?
             countdownStart = new Date()
-            clearInterval countdownInterval
+            clearInterval countdownTimerID
 
-            countdownInterval = setInterval onCountdownUpdate, 1000
+            countdownTimerID = setInterval onCountdownUpdate, 1000
 
         if countdown <= 0
             status = 'departed'
+
+            unless previousStatus is 'departed'
+                setInterval reset, 5*1000 # 5sec
+
+    unless status is 'departed'
+        clearInterval resetTimerID
+
 
     current =
         status: status
@@ -106,6 +119,16 @@ update = ->
 
     io.sockets.emit 'update', status
 
+reset = ->
+    users = {}
+    socket = null
+    clearInterval resetTimerID
+    clearInterval countdownTimerID
+    countdownStart = null
+    countdownTimerID = null
+    countdownValue = config.countdown
+
+    update()
 
 onCountdownUpdate = ->
     diff = +new Date() - countdownStart.getTime()
@@ -115,7 +138,7 @@ onCountdownUpdate = ->
     countdownValue = countdown
 
     if countdown <= 0
-        clearInterval countdownInterval
+        clearInterval countdownTimerID
         console.log "finished!"
 
     update()

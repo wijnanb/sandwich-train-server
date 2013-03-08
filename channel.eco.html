@@ -11,7 +11,6 @@
     </div>
     <script>
       function onStatus(status) {
-        console.log("status", status);
         $('.current .status').html(status.status);
         $('.current .count').html(status.count);
         $('.current .countdown').html(status.countdown);
@@ -20,14 +19,32 @@
       $(function(){
         $.post('/status', function(response){
           onStatus(response)
-
         });
 
-        var socket = io.connect('http://localhost:8081');
+        socket_options = {
+          'reconnect': true,
+          'reconnection delay': 3000,
+          'max reconnection attempts': 100
+        }
+
+        var socket = io.connect('http://localhost:8081', socket_options);
+
+        socket.on('connect', function() {
+          console.log("[socket] socket connected");
+        });
+
         socket.on('update', function (data) {
+          console.log("[socket] status", JSON.stringify(status));
           onStatus(data)
         });
 
+        socket.on('disconnect', function () {
+          console.warn("[socket] socket disconnected");
+        });
+
+        socket.on('reconnect_failed', function () {
+          console.error("[socket] socket reconnecting failed after 100 attempts");
+        });
       });
     </script>
   </body>
