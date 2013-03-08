@@ -4,8 +4,16 @@ path = require 'path'
 eco = require 'eco'
 io = require('socket.io').listen 8081
 
+config =
+    countdown: 12
+    leaveat: 2
+
 users = {}
 socket = null
+
+countdownStart = null
+countdownInterval = null
+countdownValue = config.countdown
 
 server = express()
 
@@ -65,11 +73,19 @@ removeHungry = (author) ->
 getStatus = (author=null)->
     count = hungryCount()
     status = 'waiting'
-    countdown = 120
+    countdown = countdownValue
 
-    if count >= 5
-        status = 'ready'
-        status = 'running'
+    if count >= config.leaveat
+        status = 'leaving'
+
+        unless countdownStart?
+            countdownStart = new Date()
+            clearInterval countdownInterval
+
+            countdownInterval = setInterval onCountdownUpdate, 1000
+
+        if countdown <= 0
+            status = 'departed'
 
     current =
         status: status
@@ -89,6 +105,23 @@ update = ->
     console.log "update", status
 
     io.sockets.emit 'update', status
+
+
+onCountdownUpdate = ->
+    diff = +new Date() - countdownStart.getTime()
+    countdown = config.countdown - Math.round(diff/1000)
+
+    console.log diff, diff, countdown
+    countdownValue = countdown
+
+    if countdown <= 0
+        clearInterval countdownInterval
+        console.log "finished!"
+
+    update()
+
+
+
 
 
 server.listen 8080
