@@ -41,13 +41,17 @@ server.post '/reset', (req, res) ->
 server.post '/hungry', (req, res) ->
     hungry = (req.body.hungry is 'true') or (req.body.hungry =='on')
     author = req.body.author or "Anonymous"
+    status = getStatus().status
 
     if hungry
         setHungry author
-        message = "Ok, we heared you, author ##{author}: you are hungry!"
+        message = "Ok, we heared you: you are hungry!"
     else
-        removeHungry author
-        message = "We canceled your hunger request, author ##{author}"
+        unless status is 'leaving'
+            removeHungry author
+            message = "We canceled your hunger request"
+        else
+            message = "The train is already about to leave, too late to cancel now"
 
     res.json
         author: author,
@@ -71,8 +75,9 @@ setHungry = (author) ->
     update()
 
 removeHungry = (author) ->
-    delete users[author]
-    update()
+    unless getStatus().status is 'leaving'
+        delete users[author]
+        update()
 
 getStatus = (author=null)->
     previousStatus = status
@@ -94,7 +99,7 @@ getStatus = (author=null)->
             status = 'departed'
 
             unless previousStatus is 'departed'
-                console.log "START TIMER!"
+                console.log "START RESET TIMER"
                 clearTimeout resetTimerID
                 resetTimerID = setTimeout reset, config.resetAllDelay
 
