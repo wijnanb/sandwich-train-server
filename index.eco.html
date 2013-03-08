@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <script src="<%= @socket_io_lib %>"></script>
+  </head>
+  <body>
+    <form action="/hungry" method="post">
+      <div style="display:none"><input type="checkbox" name="hungry" checked="checked"></div>
+      <div><input type="text" name="author" value="Bertus"></div>
+      <div><input type="submit" value="I'm hungry"></div>
+    </form>
+    <form action="/hungry?hungry" method="post">
+      <div><input type="text" name="author" value="Bertus"></div>
+      <div style="display:none"><input type="checkbox" name="hungry"></div>
+      <div><input type="submit" value="Naah, not hungry today"></div>
+    </form>
+    <form action="/status" method="post">
+      <div><input type="text" name="author" value="Bertus"></div>
+      <div><input type="submit" value="Status"></div>
+    </form>
+    <div class="status">
+
+    </div>
+    <script>
+
+    </script>
+  </body>
+</html>
