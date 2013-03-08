@@ -1,0 +1,34 @@
+<html>
+  <head>
+    <script src="http://localhost:8081/socket.io/socket.io.js"></script>
+    <script src="/static/jquery-1.9.1.min.js"></script>
+  </head>
+  <body>
+    <div class="current">
+      <div>status: <span class="status"></span></div>
+      <div>count: <span class="count"></span></div>
+      <div>countdown: <span class="countdown"></span></div>
+    </div>
+    <script>
+      function onStatus(status) {
+        console.log("status", status);
+        $('.current .status').html(status.status);
+        $('.current .count').html(status.count);
+        $('.current .countdown').html(status.countdown);
+      }
+
+      $(function(){
+        $.post('/status', function(response){
+          onStatus(response)
+
+        });
+
+        var socket = io.connect('http://localhost:8081');
+        socket.on('update', function (data) {
+          onStatus(data)
+        });
+
+      });
+    </script>
+  </body>
+</html>
