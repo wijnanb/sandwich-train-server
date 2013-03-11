@@ -5,9 +5,9 @@ path = require 'path'
 eco = require 'eco'
 io = require('socket.io').listen config.sockets_port
 
-config.countdown = 12
-config.leaveat = 2
-config.resetAllDelay = 5*1000 # 5sec
+config.countdown = 120 # 2minutes
+config.leaveat = 5
+config.resetAllDelay = 1*60*1000 # 1 minuut
 
 users = {}
 socket = null
