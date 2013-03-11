@@ -5,10 +5,6 @@ path = require 'path'
 eco = require 'eco'
 io = require('socket.io').listen config.sockets_port
 
-config.countdown = 120 # 2minutes
-config.leaveat = 5
-config.resetAllDelay = 1*60*1000 # 1 minuut
-
 users = {}
 socket = null
 
@@ -16,6 +12,12 @@ countdownStart = null
 countdownTimerID = null
 countdownValue = config.countdown
 resetTimerID = null
+
+io.enable 'browser client minification'         # send minified client
+io.enable 'browser client etag'                 # apply etag caching logic based on version number
+io.enable 'browser client gzip'                 # gzip the file
+io.set 'log level', config.log_level
+io.set 'transports', config.transports
 
 server = express()
 
@@ -101,7 +103,7 @@ getStatus = (author=null)->
             unless previousStatus is 'departed'
                 console.log "START RESET TIMER"
                 clearTimeout resetTimerID
-                resetTimerID = setTimeout reset, config.resetAllDelay
+                resetTimerID = setTimeout reset, config.resetAllDelay*1000
 
     unless status is 'departed'
         clearTimeout resetTimerID
@@ -152,5 +154,6 @@ onCountdownUpdate = ->
     update()
 
 
-console.log "listening on port " + config.server_port
+console.log "http server running on port " + config.server_port
+console.log "sockets server running on port " + config.sockets_port
 server.listen config.server_port
