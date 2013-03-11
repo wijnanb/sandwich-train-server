@@ -1,8 +1,9 @@
+config = require('./config.js').config
 express = require 'express'
 fs = require 'fs'
 path = require 'path'
 eco = require 'eco'
-io = require('socket.io').listen 8081
+io = require('socket.io').listen config.sockets_port
 
 config =
     countdown: 12
@@ -152,4 +153,4 @@ onCountdownUpdate = ->
     update()
 
 
-server.listen 8080
+server.listen config.server_port
