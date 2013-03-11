@@ -5,10 +5,9 @@ path = require 'path'
 eco = require 'eco'
 io = require('socket.io').listen config.sockets_port
 
-config =
-    countdown: 12
-    leaveat: 2
-    resetAllDelay: 5*1000 # 5sec
+config.countdown = 12
+config.leaveat = 2
+config.resetAllDelay = 5*1000 # 5sec
 
 users = {}
 socket = null
@@ -153,4 +152,5 @@ onCountdownUpdate = ->
     update()
 
 
+console.log "listening on port " + config.server_port
 server.listen config.server_port
