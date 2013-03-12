@@ -24,6 +24,11 @@ server = express()
 server.configure ->
     server.use '/static', express.static path.join(__dirname, '/static')
     server.use express.bodyParser()
+    app.use (req, res, next) ->
+        res.header 'Access-Control-Allow-Origin', config.allowedDomains
+        res.header 'Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'
+        res.header 'Access-Control-Allow-Headers', 'Content-Type'
+        next()
 
 server.get '/', (req, res) ->
     template = fs.readFileSync path.join(__dirname + "/index.eco.html"), "utf-8"
