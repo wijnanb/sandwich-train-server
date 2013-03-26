@@ -9,9 +9,9 @@ users = {}
 socket = null
 
 countdownStart = null
-countdownTimerID = null
+countdownIntervalID = null
 countdownValue = config.countdown
-resetTimerID = null
+resetTimeoutID = null
 
 io.enable 'browser client minification'         # send minified client
 io.enable 'browser client etag'                 # apply etag caching logic based on version number
@@ -98,20 +98,20 @@ getStatus = (author=null)->
 
         unless countdownStart?
             countdownStart = new Date()
-            clearInterval countdownTimerID
+            clearInterval countdownIntervalID
 
-            countdownTimerID = setInterval onCountdownUpdate, 1000
+            countdownIntervalID = setInterval onCountdownUpdate, 1000
 
         if countdown <= 0
             status = 'departed'
 
             unless previousStatus is 'departed'
                 console.log "START RESET TIMER"
-                clearTimeout resetTimerID
-                resetTimerID = setTimeout reset, config.resetAllDelay*1000
+                clearTimeout resetTimeoutID
+                resetTimeoutID = setTimeout reset, config.resetAllDelay*1000
 
     unless status is 'departed'
-        clearTimeout resetTimerID
+        clearTimeout resetTimeoutID
 
 
     current =
@@ -137,10 +137,10 @@ reset = ->
     console.log "RESET"
     users = {}
     socket = null
-    clearTimeout resetTimerID
-    clearInterval countdownTimerID
+    clearTimeout resetTimeoutID
+    clearInterval countdownIntervalID
     countdownStart = null
-    countdownTimerID = null
+    countdownIntervalID = null
     countdownValue = config.countdown
 
     update()
@@ -153,7 +153,7 @@ onCountdownUpdate = ->
     countdownValue = countdown
 
     if countdown <= 0
-        clearInterval countdownTimerID
+        clearInterval countdownIntervalID
         console.log "finished!"
 
     update()
