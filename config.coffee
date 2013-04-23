@@ -5,5 +5,6 @@ exports.config =
     countdown: 120          # 2 minutes
     resetAllDelay: 60       # 1 minute
     log_level: 1            # 0 - error, 1 - warn, 2 - info, 3 - debug
+    log_location: "/tmp/sandwich-train.log"
     transports: ['websocket', 'htmlfile', 'xhr-polling', 'jsonp-polling']   # don't use flashsockets if not on port 80
     allowedDomains: "*"
