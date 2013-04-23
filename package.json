@@ -7,7 +7,8 @@
         "coffee-script" : "1.6.1",
         "eco" : "1.1",
         "express": "3.1.x",
-        "socket.io": "0.9.13"
+        "socket.io": "0.9.13",
+        "log4js": "0.6.3"
     },
     "engines" : {
         "node":"0.8.x"

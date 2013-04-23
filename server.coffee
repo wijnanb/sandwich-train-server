@@ -4,6 +4,7 @@ fs = require 'fs'
 path = require 'path'
 eco = require 'eco'
 io = require('socket.io').listen config.sockets_port
+require('log4js').replaceConsole()
 
 users = {}
 socket = null
@@ -106,7 +107,7 @@ getStatus = (author=null)->
             status = 'departed'
 
             unless previousStatus is 'departed'
-                console.log "START RESET TIMER"
+                console.log "START RESET TIMER -> call reset in " + config.resetAllDelay + "s"
                 clearTimeout resetTimeoutID
                 resetTimeoutID = setTimeout reset, config.resetAllDelay*1000
 
@@ -127,8 +128,6 @@ getStatus = (author=null)->
 
 update = ->
     status = getStatus()
-
-    console.log "users", users
     console.log "update", status
 
     io.sockets.emit 'update', status
@@ -149,7 +148,6 @@ onCountdownUpdate = ->
     diff = +new Date() - countdownStart.getTime()
     countdown = config.countdown - Math.round(diff/1000)
 
-    console.log diff, diff, countdown
     countdownValue = countdown
 
     if countdown <= 0
