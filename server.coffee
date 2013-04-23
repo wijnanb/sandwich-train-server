@@ -7,11 +7,6 @@ io = require('socket.io').listen config.sockets_port
 log4js = require('log4js')
 log4js.replaceConsole()
 
-log4js.loadAppender 'file'
-log4js.addAppender log4js.appenders.file(config.log_location), 'sandwich-train'
-logger = log4js.getLogger 'sandwich-train'
-logger.setLevel 'DEBUG'
-
 users = {}
 socket = null
 
@@ -113,7 +108,7 @@ getStatus = (author=null)->
             status = 'departed'
 
             unless previousStatus is 'departed'
-                logger.debug "START RESET TIMER -> call reset in " + config.resetAllDelay + "s"
+                console.log "START RESET TIMER -> call reset in " + config.resetAllDelay + "s"
                 clearTimeout resetTimeoutID
                 resetTimeoutID = setTimeout reset, config.resetAllDelay*1000
 
@@ -134,12 +129,12 @@ getStatus = (author=null)->
 
 update = ->
     status = getStatus()
-    logger.debug "update", status
+    console.log "update", status
 
     io.sockets.emit 'update', status
 
 reset = ->
-    logger.debug "RESET"
+    console.log "RESET"
     users = {}
     socket = null
     clearTimeout resetTimeoutID
@@ -158,11 +153,11 @@ onCountdownUpdate = ->
 
     if countdown <= 0
         clearInterval countdownIntervalID
-        logger.debug "finished!"
+        console.log "finished!"
 
     update()
 
 
-logger.debug "http server running on port " + config.server_port
-logger.debug "sockets server running on port " + config.sockets_port
+console.log "http server running on port " + config.server_port
+console.log "sockets server running on port " + config.sockets_port
 server.listen config.server_port
