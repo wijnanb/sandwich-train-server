@@ -2,7 +2,7 @@
     "name" : "sandwich-train",
     "description" : "Sandwich Train server proudly built in node.js",
     "author" : "VikingCo",
-    "version" : "0.2.0",
+    "version" : "0.2.1",
     "dependencies" : {
         "coffee-script" : "1.6.1",
         "eco" : "1.1",

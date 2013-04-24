@@ -112,10 +112,6 @@ getStatus = (author=null)->
                 clearTimeout resetTimeoutID
                 resetTimeoutID = setTimeout reset, config.resetAllDelay*1000
 
-    unless status is 'departed'
-        clearTimeout resetTimeoutID
-
-
     current =
         status: status
         count: count
