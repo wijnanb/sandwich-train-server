@@ -7,6 +7,7 @@ io = require('socket.io').listen config.sockets_port
 log4js = require('log4js')
 log4js.replaceConsole()
 
+status = 'waiting'
 users = {}
 socket = null
 
@@ -121,13 +122,16 @@ getStatus = (author=null)->
         current.author = author
         current.hungry = isHungry(author)
 
+    unless previousStatus is status
+        console.log "status: ", previousStatus, '->', status
+
     return current
 
 update = ->
-    status = getStatus()
-    console.log "update", status
+    statusObject = getStatus()
+    console.log "update", statusObject
 
-    io.sockets.emit 'update', status
+    io.sockets.emit 'update', statusObject
 
 reset = ->
     console.log "RESET"
