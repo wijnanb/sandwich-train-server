@@ -3,6 +3,7 @@ express = require 'express'
 fs = require 'fs'
 path = require 'path'
 eco = require 'eco'
+hipchat = require('./hipchat.js')
 io = require('socket.io').listen config.sockets_port
 log4js = require('log4js')
 log4js.replaceConsole()
@@ -122,8 +123,15 @@ getStatus = (author=null)->
         current.author = author
         current.hungry = isHungry(author)
 
+    # state changes are caught here
     unless previousStatus is status
         console.log "status: ", previousStatus, '->', status
+
+        if status is 'leaving' and previousStatus is 'waiting'
+            hipchat.leaving()
+
+        if status is 'departed' and previousStatus is 'leaving'
+            hipchat.departed()
 
     return current
 
@@ -156,7 +164,6 @@ onCountdownUpdate = ->
         console.log "finished!"
 
     update()
-
 
 console.log "http server running on port " + config.server_port
 console.log "sockets server running on port " + config.sockets_port

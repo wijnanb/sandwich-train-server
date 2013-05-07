@@ -1,0 +1,7 @@
+https://api.hipchat.com/v1/rooms/message?format=json&auth_token=1cd513768bb3823d484d836ca167f9&room_id=194381&from=Train alert&message=Watch out, the Sandwich Train is leaving in 2 minutes. Hurry up!&notify=1&color=yellow&message_format=text
+
+
+https://api.hipchat.com/v1/rooms/message?format=json&auth_token=1cd513768bb3823d484d836ca167f9&room_id=194381&from=Train alert!&message=Watch out, the Sandwich Train is leaving right NOW!&notify=1&color=red&message_format=text
+
+
+VikingCo general room id: 190791
